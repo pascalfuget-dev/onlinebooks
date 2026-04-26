@@ -9,6 +9,13 @@ mediaType: application/json
 uses:
     onlinebooksTypes: exchange_modules/bcb991d0-dc5b-4ff7-b0d9-bda707983f40/onlinebooks-types/1.3.0/onlinebooks-types.raml
 
+types:
+  ErrorResponse:
+    properties:
+      code: string
+      message: string
+      details: string?
+
 /orders:
     get:
         description: Retrieve all orders
@@ -55,9 +62,27 @@ uses:
                     application/json:
                         type: onlinebooksTypes.Order
             400:
+                description: |
+                    Erreur de validation métier :
+                    - CLIENT_INVALID: L'ID client fourni n'existe pas.
+                    - BOOK_NOT_FOUND: Un ou plusieurs IDs de livres n'existent pas dans le catalogue.
+                    - OUT_OF_STOCK: Un ou plusieurs livres ne sont plus disponibles.
                 body:
                     application/json:
-                        example: |
-                            {
-                              "message": "Invalid order data"
-                            }
+                        type: ErrorResponse
+                        examples:
+                            clientError:
+                                value:
+                                    code: "CLIENT_INVALID"
+                                    message: "Le client avec l'ID 500 n'existe pas."
+                                    details: "Vérifiez que l'ID client existe dans la base de données clients."
+                            bookError:
+                                value:
+                                    code: "BOOK_INVALID"
+                                    message: "Le livre avec l'ID 500 n'existe pas."
+                                    details: "Vérifiez que le livre existe dans le catalogue des livres."
+                            stockError:
+                                value:
+                                    code: "OUT_OF_STOCK"
+                                    message: "Stock insuffisant pour le livre ID 101."
+                                    details: "Consultez l'API d'inventaire pour connaître la disponibilité actuelle."

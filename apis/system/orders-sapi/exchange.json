@@ -5,6 +5,7 @@
   "organizationId": "bcb991d0-dc5b-4ff7-b0d9-bda707983f40",
   "descriptorVersion": "1.0.0",
   "tags": [],
+  "apiVersion": "1.0.0",
   "dependencies": [
     {
       "groupId": "bcb991d0-dc5b-4ff7-b0d9-bda707983f40",
@@ -14,6 +15,5 @@
   ],
   "groupId": "bcb991d0-dc5b-4ff7-b0d9-bda707983f40",
   "assetId": "orders-sapi",
-  "version": "1.0.0",
-  "apiVersion": "1.0.0"
+  "version": "1.0.1"
 }

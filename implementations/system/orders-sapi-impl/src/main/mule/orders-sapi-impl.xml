@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" 
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" 
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" 
+      xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+      xmlns:os="http://www.mulesoft.org/schema/mule/os" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+                          http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+                          http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+                          http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+                          http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+    <!-- HTTP Listener Configuration -->
+    <http:listener-config name="orders-sapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8083"/>
+    </http:listener-config>
+
+    <!-- APIKit Configuration -->
+    <apikit:config api="resource::bcb991d0-dc5b-4ff7-b0d9-bda707983f40:orders-sapi:1.0.1:raml:zip:orders-sapi.raml" 
+                   httpStatusVarName="httpStatus" 
+                   name="orders-sapi-config" 
+                   outboundHeadersMapName="outboundHeaders"/>
+
+    <!-- HTTP Request Configuration for external APIs -->
+    <http:request-config name="customers-api-config">
+        <http:request-connection host="localhost" port="8081"/>
+    </http:request-config>
+
+    <http:request-config name="books-catalog-api-config">
+        <http:request-connection host="localhost" port="8081"/>
+    </http:request-config>
+
+    <http:request-config name="inventory-api-config">
+        <http:request-connection host="localhost" port="8082"/>
+    </http:request-config>
+
+    <!-- Object Store Configuration -->
+    <os:object-store name="orders"/>
+
+    <!-- Main API Flow -->
+    <flow name="orders-sapi-main">
+        <http:listener config-ref="orders-sapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="orders-sapi-config"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+    <!-- API Console Flow -->
+    <flow name="orders-sapi-console">
+        <http:listener config-ref="orders-sapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="orders-sapi-config"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+    <!-- Initialize Orders Data Flow -->
+    <flow doc:name="init-orders" name="init-orders">
+        <http:listener config-ref="orders-sapi-httpListenerConfig" doc:name="Listener" path="/init"/>
+        <logger doc:name="Logger" level="INFO" message="Starting orders data initialization..."/>
+        <os:clear doc:name="Clear Orders" objectStore="orders"/>
+        <ee:transform doc:name="Load Sample Orders">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+[
+    {
+        orderId: "ORD001",
+        customerId: 1,
+        status: "PENDING",
+        items: [
+            { bookId: 1, quantity: 2 },
+            { bookId: 2, quantity: 1 }
+        ],
+        totalAmount: 89.97
+    },
+    {
+        orderId: "ORD002", 
+        customerId: 2,
+        status: "SHIPPED",
+        items: [
+            { bookId: 3, quantity: 1 }
+        ],
+        totalAmount: 24.99
+    },
+    {
+        orderId: "ORD003",
+        customerId: 1, 
+        status: "DELIVERED",
+        items: [
+            { bookId: 1, quantity: 1 },
+            { bookId: 4, quantity: 2 }
+        ],
+        totalAmount: 74.97
+    }
+]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <foreach doc:name="Foreach">
+            <os:store doc:name="Store Orders" key="#[payload.orderId]" objectStore="orders"/>
+        </foreach>
+        <os:store doc:name="Store Last Order ID Counter" key="lastOrderId" objectStore="orders">
+            <os:value><![CDATA[3]]></os:value>
+        </os:store>
+        <logger doc:name="Logger" level="INFO" message="Orders data initialization completed successfully"/>
+        <ee:transform doc:name="Transform Response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "status": "success",
+    "message": "Orders Object Store reset with sample data",
+    "timestamp": now() as String,
+    "loadedOrders": 3
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+    <!-- GET /orders - Retrieve all orders with pagination -->
+    <flow name="get:\orders:orders-sapi-config">
+        <logger doc:name="Logger" level="INFO" message="Retrieving all orders with limit: #[attributes.queryParams.limit default 50] and offset: #[attributes.queryParams.offset default 0]"/>
+        <os:retrieve-all doc:name="Retrieve All Orders" objectStore="orders"/>
+        <ee:transform doc:name="Transform and Paginate Orders">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var limit = attributes.queryParams.limit default 50 as Number
+var offset = attributes.queryParams.offset default 0 as Number
+var allOrders = (payload pluck ($)) filter ($ is Object and $.orderId != null)
+---
+allOrders[offset to (offset + limit - 1)]]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+    <!-- GET /orders/{id} - Retrieve order by ID -->
+    <flow name="get:\orders\(id):orders-sapi-config">
+        <logger doc:name="Logger" level="INFO" message="Retrieving order with ID: #[attributes.uriParams.id]"/>
+        <try doc:name="Try">
+            <os:retrieve doc:name="Retrieve Order" key="#[attributes.uriParams.id]" objectStore="orders"/>
+            <ee:transform doc:name="Transform Order">
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <error-handler>
+                <on-error-propagate type="OS:KEY_NOT_FOUND">
+                    <ee:transform doc:name="Order Not Found">
+                        <ee:message>
+                            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "message": "Order not found"
+}]]></ee:set-payload>
+                        </ee:message>
+                        <ee:variables>
+                            <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                        </ee:variables>
+                    </ee:transform>
+                </on-error-propagate>
+            </error-handler>
+        </try>
+    </flow>
+
+    <!-- POST /orders - Create a new order with business validations -->
+    <flow name="post:\orders:application\json:orders-sapi-config">
+        <logger doc:name="Logger" level="INFO" message="Creating new order for customer: #[payload.customerId]"/>
+        
+        <!-- Store original payload -->
+        <set-variable doc:name="Set Original Order" variableName="originalOrder" value="#[payload]"/>
+        
+        <!-- Validate customer exists -->
+        <flow-ref doc:name="Validate Customer" name="validate-customer-flow"/>
+        
+        <!-- Validate books exist and calculate total amount -->
+        <flow-ref doc:name="Validate Books and Calculate Total" name="validate-books-and-calculate-total-flow"/>
+        
+        <!-- Check inventory availability -->
+        <flow-ref doc:name="Check Inventory" name="check-inventory-flow"/>
+        
+        <!-- Generate new order ID and create order -->
+        <flow-ref doc:name="Create Order" name="create-order-flow"/>
+        
+        <logger doc:name="Logger" level="INFO" message="Order created successfully with ID: #[payload.orderId]"/>
+    </flow>
+
+    <!-- Sub-flow: Validate Customer -->
+    <sub-flow name="validate-customer-flow">
+        <try doc:name="Try">
+            <http:request doc:name="Get Customer" method="GET" 
+                         config-ref="customers-api-config" 
+                         path="/api/customers/{customerId}">
+                <http:uri-params><![CDATA[#[{customerId: vars.originalOrder.customerId}]]]></http:uri-params>
+            </http:request>
+            <error-handler>
+                <on-error-propagate type="HTTP:NOT_FOUND, HTTP:CLIENT_ERROR">
+                    <ee:transform doc:name="Customer Not Found Error">
+                        <ee:message>
+                            <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    code: "CLIENT_INVALID",
+    message: "Le client avec l'ID " ++ (vars.originalOrder.customerId as String) ++ " n'existe pas.",
+    details: "Vérifiez que l'ID client existe dans la base de données clients."
+}]]></ee:set-payload>
+                        </ee:message>
+                        <ee:variables>
+                            <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                        </ee:variables>
+                    </ee:transform>
+                </on-error-propagate>
+            </error-handler>
+        </try>
+    </sub-flow>
+
+    <!-- Sub-flow: Validate Books and Calculate Total -->
+    <sub-flow name="validate-books-and-calculate-total-flow">
+        <set-variable doc:name="Set Total Amount" variableName="totalAmount" value="#[0]"/>
+        <foreach doc:name="Foreach Book Item" collection="#[vars.originalOrder.items]">
+            <set-variable doc:name="Set Current Item" variableName="currentItem" value="#[payload]"/>
+            <try doc:name="Try">
+                <http:request doc:name="Get Book" method="GET" 
+                             config-ref="books-catalog-api-config" 
+                             path="/api/books/{bookId}">
+                    <http:uri-params><![CDATA[#[{bookId: vars.currentItem.bookId}]]]></http:uri-params>
+                </http:request>
+                <set-variable doc:name="Update Total Amount" 
+                             variableName="totalAmount" 
+                             value="#[(vars.totalAmount default 0) + ((payload.price default 0) * (vars.currentItem.quantity default 0))]"/>
+                <error-handler>
+                    <on-error-propagate type="HTTP:NOT_FOUND, HTTP:CLIENT_ERROR">
+                        <ee:transform doc:name="Book Not Found Error">
+                            <ee:message>
+                                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    code: "BOOK_INVALID",
+    message: "Le livre avec l'ID " ++ (vars.currentItem.bookId as String) ++ " n'existe pas.",
+    details: "Vérifiez que le livre existe dans le catalogue des livres."
+}]]></ee:set-payload>
+                            </ee:message>
+                            <ee:variables>
+                                <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                            </ee:variables>
+                        </ee:transform>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </foreach>
+    </sub-flow>
+
+    <!-- Sub-flow: Check Inventory -->
+    <sub-flow name="check-inventory-flow">
+        <foreach doc:name="Foreach Book Item" collection="#[vars.originalOrder.items]">
+            <set-variable doc:name="Set Current Item" variableName="currentItem" value="#[payload]"/>
+            <try doc:name="Try">
+                <http:request doc:name="Get Stock" method="GET" 
+                             config-ref="inventory-api-config" 
+                             path="/api/stock/{bookId}">
+                    <http:uri-params><![CDATA[#[{bookId: vars.currentItem.bookId}]]]></http:uri-params>
+                </http:request>
+                <choice doc:name="Choice">
+                    <when expression="#[payload.quantity &lt; vars.currentItem.quantity]">
+                        <ee:transform doc:name="Out of Stock Error">
+                            <ee:message>
+                                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    code: "OUT_OF_STOCK",
+    message: "Stock insuffisant pour le livre ID " ++ (vars.currentItem.bookId as String) ++ ".",
+    details: "Consultez l'API d'inventaire pour connaître la disponibilité actuelle."
+}]]></ee:set-payload>
+                            </ee:message>
+                            <ee:variables>
+                                <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                            </ee:variables>
+                        </ee:transform>
+                        <raise-error doc:name="Raise Error" type="CUSTOM:OUT_OF_STOCK"/>
+                    </when>
+                </choice>
+                <error-handler>
+                    <on-error-propagate type="HTTP:NOT_FOUND, HTTP:CLIENT_ERROR">
+                        <ee:transform doc:name="Stock Not Found Error">
+                            <ee:message>
+                                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    code: "OUT_OF_STOCK",
+    message: "Stock insuffisant pour le livre ID " ++ (vars.currentItem.bookId as String) ++ ".",
+    details: "Consultez l'API d'inventaire pour connaître la disponibilité actuelle."
+}]]></ee:set-payload>
+                            </ee:message>
+                            <ee:variables>
+                                <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                            </ee:variables>
+                        </ee:transform>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </foreach>
+    </sub-flow>
+
+    <!-- Sub-flow: Create Order -->
+    <sub-flow name="create-order-flow">
+        <!-- Get and increment order ID counter -->
+        <os:retrieve doc:name="Get Last Order ID" key="lastOrderId" objectStore="orders" target="lastOrderId" targetValue="#[payload as Number]">
+            <os:default-value><![CDATA[0]]></os:default-value>
+        </os:retrieve>
+        
+        <!-- Create new order with generated ID -->
+        <ee:transform doc:name="Create New Order">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var currentOrderId = vars.lastOrderId default 0
+var newOrderId = "ORD" ++ ((currentOrderId + 1) as String {format: "000"})
+---
+vars.originalOrder update {
+    case .orderId -> newOrderId
+    case .status -> "PENDING"
+    case .totalAmount -> vars.totalAmount
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        
+        <!-- Store the new order -->
+        <os:store doc:name="Store New Order" key="#[payload.orderId]" objectStore="orders"/>
+        
+        <!-- Update order ID counter -->
+        <os:store doc:name="Update Order ID Counter" key="lastOrderId" objectStore="orders">
+            <os:value><![CDATA[#[(vars.lastOrderId default 0) + 1]]]></os:value>
+        </os:store>
+        
+        <!-- Set HTTP status to 201 (Created) -->
+        <set-variable doc:name="Set Created Status" variableName="httpStatus" value="201"/>
+    </sub-flow>
+
+</mule>

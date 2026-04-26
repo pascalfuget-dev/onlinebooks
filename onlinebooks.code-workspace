@@ -31,6 +31,10 @@
 		{
 			"name": "customer-sapi-impl",
 			"path": "implementations/system/customer-sapi-impl"
+		},
+		{
+			"name": "orders-sapi-impl",
+			"path": "implementations/system/orders-sapi-impl"
 		}
 	],
 	"settings": {
