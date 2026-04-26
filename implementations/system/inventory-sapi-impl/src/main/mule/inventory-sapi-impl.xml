@@ -152,7 +152,7 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="get:\stocks\(bookId):inventory-sapi-config">
-    <logger doc:name="Logger" doc:id="yytzoq" message='#["bookId = " ++ attributes.uriParams.bookId]'/>
+    <logger doc:name="Logger" doc:id="yytzoq" message='#["get stocks/" ++ attributes.uriParams.bookId]'/>
         
     <os:retrieve doc:name="Retrieve" doc:id="tqqevv" key="#[attributes.uriParams.bookId]" objectStore="stocks"/>
         <ee:transform doc:name="Transform Message">
