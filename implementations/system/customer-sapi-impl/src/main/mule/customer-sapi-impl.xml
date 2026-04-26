@@ -135,7 +135,23 @@ payload]]></ee:set-payload>
     </ee:transform>
   </flow>
   <flow name="post:\customers:application\json:customers-sapi-config">
-    <os:store doc:id="cqlqus" doc:name="Store" key="#[payload.id]" objectStore="Customers"></os:store>
+        <os:retrieve doc:name="Retrieve" doc:id="hlytzi" key="lastid" objectStore="Customers" target="lastid" targetValue="#[payload as Number]">
+            <os:default-value><![CDATA[0]]></os:default-value>
+        </os:retrieve>
+    <ee:transform doc:name="Transform" doc:id="nkxwdd" >
+      <ee:message >
+        <ee:set-payload doc:name="Set payload" doc:id="tpnhff" ><![CDATA[%dw 2.0
+output application/json
+---
+payload update {
+    case .id -> (vars.lastid + 1)
+}]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+    <os:store doc:id="cqlqus" doc:name="Store" key="#[vars.lastid + 1]" objectStore="Customers"/>
+        <os:store doc:name="Store" doc:id="vzjehl" key="lastid" objectStore="Customers">
+            <os:value><![CDATA[#[vars.lastid + 1]]]></os:value>
+        </os:store>
     <ee:transform doc:name="Transform" doc:id="vnvjfn" >
       <ee:message >
         <ee:set-payload doc:name="Set payload" doc:id="gnasqi" ><![CDATA[%dw 2.0
