@@ -17,6 +17,10 @@
 			"path": "apis/system/customers-sapi"
 		},
 		{
+			"name": "orders-sapi",
+			"path": "apis/system/orders-sapi"
+		},
+		{
 			"name": "books-catalog-sapi-impl",
 			"path": "implementations/system/books-catalog-sapi-impl"
 		},

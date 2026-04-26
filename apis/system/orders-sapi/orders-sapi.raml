@@ -1,0 +1,63 @@
+#%RAML 1.0
+title: orders-sapi
+description: |
+  System API for managing orders information.
+  Provides access to orders data with CRUD operations.
+version: v1
+mediaType: application/json
+
+uses:
+    onlinebooksTypes: exchange_modules/bcb991d0-dc5b-4ff7-b0d9-bda707983f40/onlinebooks-types/1.3.0/onlinebooks-types.raml
+
+/orders:
+    get:
+        description: Retrieve all orders
+        queryParameters:
+            limit?:
+                type: integer
+                description: Maximum number of orders to return
+                example: 10
+                default: 50
+            offset?:
+                type: integer
+                description: Number of books to skip
+                example: 0
+                default: 0
+        responses:
+            200:
+                body:
+                    application/json:
+                        type: onlinebooksTypes.Order[]
+
+    /{id}:
+        get:
+            description: Retrieve an order by ID
+            responses:
+                200:
+                    body:
+                        application/json:
+                            type: onlinebooksTypes.Order
+                404:
+                    body:
+                        application/json:
+                            example: |
+                                {
+                                  "message": "Order not found"
+                                }
+    post:
+        description: Create a new order
+        body:
+            application/json:
+                type: onlinebooksTypes.Order
+        responses:
+            201:
+                body:
+                    application/json:
+                        type: onlinebooksTypes.Order
+            400:
+                body:
+                    application/json:
+                        example: |
+                            {
+                              "message": "Invalid order data"
+                            }
