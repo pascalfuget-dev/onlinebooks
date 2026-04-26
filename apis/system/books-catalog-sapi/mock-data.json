@@ -1,0 +1,42 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "The Great Gatsby",
+      "authorId": 101,
+      "price": 15.99,
+      "isbn": "978-0-7432-7356-5"
+    },
+    {
+      "id": 2,
+      "title": "To Kill a Mockingbird",
+      "authorId": 102,
+      "price": 12.50,
+      "isbn": "978-0-06-112008-4"
+    },
+    {
+      "id": 3,
+      "title": "1984",
+      "authorId": 103,
+      "price": 13.99,
+      "isbn": "978-0-452-28423-4"
+    }
+  ],
+  "authors": [
+    {
+      "id": 101,
+      "name": "F. Scott Fitzgerald",
+      "biography": "American novelist and short story writer, widely regarded as one of the greatest American writers of the 20th century."
+    },
+    {
+      "id": 102,
+      "name": "Harper Lee",
+      "biography": "American novelist best known for her 1960 novel To Kill a Mockingbird."
+    },
+    {
+      "id": 103,
+      "name": "George Orwell",
+      "biography": "English novelist and journalist, famous for his dystopian novel 1984 and allegorical novella Animal Farm."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "basicConstraints": 14,
+  "criticalExtensionOIDs": [
+    "felis",
+    "pulvinar"
+  ],
+  "extendedKeyUsage": [
+    "ut",
+    "venenatis"
+  ],
+  "extensions": [
+    {
+      "criticality": true,
+      "oid": "a"
+    }
+  ],
+  "issuerAlternativeNames": [
+    {
+      "name": "Christian",
+      "type": 7
+    }
+  ],
+  "issuerDN": {
+    "commonName": "faucibus",
+    "name": "Adaline"
+  },
+  "issuerUniqueID": [
+    false,
+    true,
+    false
+  ],
+  "issuerX500Principal": {
+    "name": "Claud"
+  },
+  "keyUsage": [
+    false,
+    false
+  ],
+  "name": "Amira",
+  "nonCriticalExtensionOIDs": [
+    "risus",
+    "nunc",
+    "ut"
+  ],
+  "notAfter": "2025-11-04",
+  "notBefore": "2024-09-28",
+  "publicKey": {
+    "algorithm": "Pellentesque",
+    "modulus": 36,
+    "params": 42,
+    "publicKey": "consectetur"
+  },
+  "serialNumber": 58,
+  "serialNumberObject": {
+    "serialNumber": 69
+  },
+  "sigAlgName": "viverra",
+  "sigAlgOID": "ac",
+  "subjectAlternativeNames": [
+    {
+      "name": "Amiee",
+      "type": 6
+    }
+  ],
+  "subjectDN": {
+    "commonName": "Nunc",
+    "name": "Alline"
+  },
+  "subjectX500Principal": {
+    "name": "Andera"
+  },
+  "type": "dictum",
+  "version": 33
+}

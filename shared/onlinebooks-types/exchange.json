@@ -1,0 +1,11 @@
+{
+  "main": "onlinebooks-types.raml",
+  "name": "onlinebooks-types",
+  "classifier": "raml-fragment",
+  "organizationId": "bcb991d0-dc5b-4ff7-b0d9-bda707983f40",
+  "descriptorVersion": "1.0.0",
+  "groupId": "bcb991d0-dc5b-4ff7-b0d9-bda707983f40",
+  "assetId": "onlinebooks-types",
+  "version": "1.3.0",
+  "tags": []
+}

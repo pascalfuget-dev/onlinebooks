@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "Isaac Asimov", "biography": "Père des trois lois de la robotique et de la saga Foundation." },
+  { "id": 2, "name": "Frank Herbert", "biography": "Auteur du chef-d'oeuvre Dune." },
+  { "id": 3, "name": "Philip K. Dick", "biography": "Maître du cyberpunk et de la paranoïa (Blade Runner)." },
+  { "id": 4, "name": "Ursula K. Le Guin", "biography": "Anthropologue de l'imaginaire (La Main gauche de la nuit)." },
+  { "id": 5, "name": "Arthur C. Clarke", "biography": "Auteur de 2001 : l'Odyssée de l'espace." },
+  { "id": 6, "name": "William Gibson", "biography": "Pionnier du mouvement Cyberpunk avec Neuromancien." },
+  { "id": 7, "name": "Ray Bradbury", "biography": "Auteur de Fahrenheit 451." },
+  { "id": 8, "name": "Dan Simmons", "biography": "Créateur des Cantos d'Hypérion." },
+  { "id": 9, "name": "Liu Cixin", "biography": "Auteur du Problème à trois corps." },
+  { "id": 10, "name": "H.G. Wells", "biography": "Père fondateur (La Machine à explorer le temps)." }
+]

@@ -1,0 +1,14 @@
+# Empêcher la synchro des fichiers système spécifiques à l'OS
+.DS_Store
+Thumbs.db
+
+# Empêcher la synchro des fichiers temporaires MuleSoft de TOUS les sous-dossiers
+**/target/
+**/.mule/
+**/.classpath
+**/.project
+**/.settings/
+**/bin/
+
+# Ignorer les logs
+*.log

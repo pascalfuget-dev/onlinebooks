@@ -1,0 +1,75 @@
+{
+  "basicConstraints": 21,
+  "criticalExtensionOIDs": [
+    "dolor",
+    "ut"
+  ],
+  "extendedKeyUsage": [
+    "lectus",
+    "mi",
+    "felis"
+  ],
+  "extensions": [
+    {
+      "criticality": true,
+      "oid": "libero"
+    }
+  ],
+  "issuerAlternativeNames": [
+    {
+      "name": "Adriana",
+      "type": 51
+    }
+  ],
+  "issuerDN": {
+    "commonName": "nunc",
+    "name": "Adaline"
+  },
+  "issuerUniqueID": [
+    true,
+    false,
+    false
+  ],
+  "issuerX500Principal": {
+    "name": "Chase"
+  },
+  "keyUsage": [
+    false,
+    false,
+    true
+  ],
+  "name": "Danilo",
+  "nonCriticalExtensionOIDs": [
+    "viverra",
+    "ipsum"
+  ],
+  "notAfter": "2024-03-25",
+  "notBefore": "2022-09-24",
+  "publicKey": {
+    "algorithm": "In",
+    "modulus": 23,
+    "params": 93,
+    "publicKey": "a"
+  },
+  "serialNumber": 87,
+  "serialNumberObject": {
+    "serialNumber": 97
+  },
+  "sigAlgName": "Nunc",
+  "sigAlgOID": "adipiscing",
+  "subjectAlternativeNames": [
+    {
+      "name": "Cliff",
+      "type": 30
+    }
+  ],
+  "subjectDN": {
+    "commonName": "pretium",
+    "name": "Alysa"
+  },
+  "subjectX500Principal": {
+    "name": "Colby"
+  },
+  "type": "sit",
+  "version": 95
+}

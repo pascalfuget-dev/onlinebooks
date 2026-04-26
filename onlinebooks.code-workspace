@@ -1,0 +1,52 @@
+{
+	"folders": [
+		{
+			"name": "onlinebooks-types",
+			"path": "shared/onlinebooks-types"
+		},
+		{
+			"name": "books-catalog-sapi",
+			"path": "apis/system/books-catalog-sapi"
+		},
+		{
+			"name": "inventory-sapi",
+			"path": "apis/system/inventory-sapi"
+		},
+		{
+			"name": "customers-sapi",
+			"path": "apis/system/customers-sapi"
+		},
+		{
+			"name": "books-catalog-sapi-impl",
+			"path": "implementations/system/books-catalog-sapi-impl"
+		},
+		{
+			"name": "inventory-sapi-impl",
+			"path": "implementations/system/inventory-sapi-impl"
+		},
+		{
+			"name": "customer-sapi-impl",
+			"path": "implementations/system/customer-sapi-impl"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.apivcs": true,
+			"**/.gitignore": true,
+			"**/.git": true,
+			"**/.designer.json": true,
+			"**/.exchange.xml": true,
+			"**/.vscode": true,
+			"**/.mvn": true,
+			"**/mvnw": true,
+			"**/mvnw.cmd": true,
+			"**/.tmp": true,
+			"**/.settings": true,
+			"**/.exchange_modules_tmp": true,
+			"**/.github": true
+		},
+		"editor.acceptSuggestionOnEnter": "on",
+		"editor.wordBasedSuggestions": "off",
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}

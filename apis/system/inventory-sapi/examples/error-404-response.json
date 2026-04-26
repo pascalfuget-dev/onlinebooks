@@ -1,0 +1,5 @@
+{
+  "error": "NOT_FOUND",
+  "message": "Aucun stock trouvé pour le livre avec l'ID 123456789",
+  "timestamp": "2024-01-15T10:30:00Z"
+}

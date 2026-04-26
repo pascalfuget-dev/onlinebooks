@@ -1,0 +1,14 @@
+#%RAML 1.0 Library
+
+usage: |
+  This library contains common datatypes for the Online Books application.
+  It includes all essential datatypes (Book, Author, Customer, Order, Invoice, Stock) 
+  that can be reused across different APIs.
+
+types:
+  Book: !include types/Book.raml
+  Author: !include types/Author.raml
+  Customer: !include types/Customer.raml
+  Order: !include types/Order.raml
+  Invoice: !include types/Invoice.raml
+  Stock: !include types/Stock.raml

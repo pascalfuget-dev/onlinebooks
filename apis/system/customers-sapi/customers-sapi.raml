@@ -1,0 +1,58 @@
+#%RAML 1.0
+title: Customer SAPI
+version: v1
+description: API système pour la gestion des clients
+baseUri: https://customers-sapi.example.com/api
+
+protocols: [HTTPS, HTTP]
+
+uses:
+  onlinebooksTypes: exchange_modules/bcb991d0-dc5b-4ff7-b0d9-bda707983f40/onlinebooks-types/1.3.0/onlinebooks-types.raml
+
+traits:
+  standardHeaders:
+    headers:
+      Accept:
+        type: string
+        required: true
+        default: application/json
+        enum: [application/json]
+      Content-Type:
+        type: string
+        required: true
+        default: application/json
+        enum: [application/json]
+
+/customers:
+  /{id}:
+    get:
+      description: Retrieve a customer by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: onlinebooksTypes.Customer
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Customer not found"
+                }
+  post:
+    description: Create a new customer
+    body:
+      application/json:
+        type: onlinebooksTypes.Customer
+    responses:
+      201:
+        body:
+          application/json:
+            type: onlinebooksTypes.Customer
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "Invalid customer data"
+              }

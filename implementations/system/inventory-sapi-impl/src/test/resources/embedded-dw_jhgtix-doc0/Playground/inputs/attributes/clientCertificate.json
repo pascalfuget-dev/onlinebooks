@@ -1,0 +1,76 @@
+{
+  "basicConstraints": 97,
+  "criticalExtensionOIDs": [
+    "ac",
+    "Pellentesque",
+    "tempor"
+  ],
+  "extendedKeyUsage": [
+    "In",
+    "pulvinar"
+  ],
+  "extensions": [
+    {
+      "criticality": true,
+      "oid": "libero"
+    }
+  ],
+  "issuerAlternativeNames": [
+    {
+      "name": "Chad",
+      "type": 5
+    }
+  ],
+  "issuerDN": {
+    "commonName": "dolor",
+    "name": "Damion"
+  },
+  "issuerUniqueID": [
+    false,
+    false,
+    false
+  ],
+  "issuerX500Principal": {
+    "name": "Clifton"
+  },
+  "keyUsage": [
+    true,
+    false,
+    true
+  ],
+  "name": "Chester",
+  "nonCriticalExtensionOIDs": [
+    "erat",
+    "erat",
+    "nunc"
+  ],
+  "notAfter": "2021-07-01",
+  "notBefore": "2022-05-12",
+  "publicKey": {
+    "algorithm": "semper",
+    "modulus": 17,
+    "params": 18,
+    "publicKey": "viverra"
+  },
+  "serialNumber": 74,
+  "serialNumberObject": {
+    "serialNumber": 28
+  },
+  "sigAlgName": "ac",
+  "sigAlgOID": "tempor",
+  "subjectAlternativeNames": [
+    {
+      "name": "Alec",
+      "type": 4
+    }
+  ],
+  "subjectDN": {
+    "commonName": "risus",
+    "name": "Alphonso"
+  },
+  "subjectX500Principal": {
+    "name": "Amee"
+  },
+  "type": "sodales",
+  "version": 81
+}

@@ -1,0 +1,166 @@
+#%RAML 1.0
+title: Books Catalog System API
+description: |
+  System API for managing books catalog and authors information.
+  Provides access to books and authors data with full CRUD operations.
+version: v1
+baseUri: https://api.onlinebooks.com/catalog/{version}
+mediaType: application/json
+
+uses:
+  onlinebooksTypes: exchange_modules/bcb991d0-dc5b-4ff7-b0d9-bda707983f40/onlinebooks-types/1.3.0/onlinebooks-types.raml
+
+traits:
+  errorResponses:
+    responses: 
+      404:
+        description: Resource not found
+        body:
+          application/json:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource not found"
+              message:
+                type: string
+                example: "The requested resource could not be found"
+              timestamp:
+                type: string
+                example: "2026-04-17T14:17:09Z"
+
+/books:
+  displayName: Books Collection
+  description: Operations on books collection
+  
+  get:
+    displayName: Get all books
+    description: Retrieve a list of all books in the catalog
+    queryParameters:
+      limit?:
+        type: integer
+        description: Maximum number of books to return
+        example: 10
+        default: 50
+      offset?:
+        type: integer
+        description: Number of books to skip
+        example: 0
+        default: 0
+    responses:
+      200:
+        description: Successfully retrieved books list
+        body:
+          application/json:
+            type: onlinebooksTypes.Book[]
+            example: |
+              [
+                {
+                  "id": 1,
+                  "title": "The Great Gatsby",
+                  "authorId": 101,
+                  "price": 15.99,
+                  "isbn": "978-0-7432-7356-5"
+                },
+                {
+                  "id": 2,
+                  "title": "To Kill a Mockingbird",
+                  "authorId": 102,
+                  "price": 12.50,
+                  "isbn": "978-0-06-112008-4"
+                }
+              ]
+
+  /{id}:
+    displayName: Individual Book
+    description: Operations on a specific book
+    
+    uriParameters:
+      id:
+        type: integer
+        description: Unique identifier of the book
+        example: 1
+    
+    get:
+      displayName: Get book by ID
+      description: Retrieve a specific book by its unique identifier
+      is: [errorResponses]
+      responses:
+        200:
+          description: Successfully retrieved the book
+          body:
+            application/json:
+              type: onlinebooksTypes.Book
+              example: |
+                {
+                  "id": 1,
+                  "title": "The Great Gatsby",
+                  "authorId": 101,
+                  "price": 15.99,
+                  "isbn": "978-0-7432-7356-5"
+                }
+
+/authors:
+  displayName: Authors Collection
+  description: Operations on authors collection
+  
+  get:
+    displayName: Get all authors
+    description: Retrieve a list of all authors
+    queryParameters:
+      limit?:
+        type: integer
+        description: Maximum number of authors to return
+        example: 10
+        default: 50
+      offset?:
+        type: integer
+        description: Number of authors to skip
+        example: 0
+        default: 0
+    responses:
+      200:
+        description: Successfully retrieved authors list
+        body:
+          application/json:
+            type: onlinebooksTypes.Author[]
+            example: |
+              [
+                {
+                  "id": 101,
+                  "name": "F. Scott Fitzgerald",
+                  "biography": "American novelist and short story writer, widely regarded as one of the greatest American writers of the 20th century."
+                },
+                {
+                  "id": 102,
+                  "name": "Harper Lee",
+                  "biography": "American novelist best known for her 1960 novel To Kill a Mockingbird."
+                }
+              ]
+  
+  /{id}:
+    displayName: Individual Author
+    description: Operations on a specific author
+    
+    uriParameters:
+      id:
+        type: integer
+        description: Unique identifier of the author
+        example: 101
+    
+    get:
+      displayName: Get author by ID
+      description: Retrieve a specific author by their unique identifier
+      is: [errorResponses]
+      responses:
+        200:
+          description: Successfully retrieved the author
+          body:
+            application/json:
+              type: onlinebooksTypes.Author
+              example: |
+                {
+                  "id": 101,
+                  "name": "F. Scott Fitzgerald",
+                  "biography": "American novelist and short story writer, widely regarded as one of the greatest American writers of the 20th century."
+                }

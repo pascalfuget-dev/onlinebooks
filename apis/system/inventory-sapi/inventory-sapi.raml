@@ -1,0 +1,192 @@
+#%RAML 1.0
+title: Inventory SAPI
+version: v1
+description: API système pour la gestion des niveaux de stock des livres
+baseUri: https://inventory-sapi.example.com/api
+
+protocols: [HTTPS, HTTP]
+
+
+uses:
+  onlinebooksTypes: exchange_modules/bcb991d0-dc5b-4ff7-b0d9-bda707983f40/onlinebooks-types/1.3.0/onlinebooks-types.raml
+
+traits:
+  standardHeaders:
+    headers:
+      Accept:
+        type: string
+        required: false
+        default: application/json
+        enum: [application/json]
+      Content-Type:
+        type: string
+        required: false
+        default: application/json
+        enum: [application/json]
+
+/stocks:
+  /{bookId}:
+    uriParameters:
+      bookId:
+        type: integer
+        description: Identifiant unique du livre
+        example: 123456789
+        required: true
+    
+    get:
+      displayName: Consulter le stock d'un livre
+      description: Récupère les informations de stock pour un livre spécifique
+      is: [standardHeaders]
+      responses:
+        200:
+          description: Stock du livre récupéré avec succès
+          body:
+            application/json:
+              type: onlinebooksTypes.Stock
+              example:
+                bookId: 123456789
+                quantity: 45
+                location: "Entrepôt Principal"
+        404:
+          description: Livre non trouvé
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                message:
+                  type: string
+                timestamp:
+                  type: datetime
+              example:
+                error: "NOT_FOUND"
+                message: "Aucun stock trouvé pour le livre avec l'ID 123456789"
+                timestamp: "2024-01-15T10:30:00Z"
+        500:
+          description: Erreur interne du serveur
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                message:
+                  type: string
+                timestamp:
+                  type: datetime
+              example:
+                error: "INTERNAL_ERROR"
+                message: "Une erreur inattendue s'est produite"
+                timestamp: "2024-01-15T10:30:00Z"
+    
+    patch:
+      displayName: Modifier le stock d'un livre
+      description: |
+        Met à jour la quantité de stock d'un livre. 
+        Supporte les opérations de :
+        - Décrémentation lors d'une vente (valeur négative)
+        - Incrémentation lors d'un réapprovisionnement (valeur positive)
+      is: [standardHeaders]
+      body:
+        application/json:
+          type: object
+          properties:
+            quantityChange:
+              type: integer
+              description: Changement de quantité (positif pour augmenter, négatif pour diminuer)
+              required: true
+            reason?:
+              type: string
+              description: Raison de la modification
+          examples:
+            vente:
+              quantityChange: -2
+              reason: "Vente en ligne"
+            reapprovisionnement:
+              quantityChange: 50
+              reason: "Réapprovisionnement mensuel"
+      responses:
+        200:
+          description: Stock mis à jour avec succès
+          body:
+            application/json:
+              type: onlinebooksTypes.Stock
+              example:
+                bookId: 123456789
+                quantity: 43
+                location: "Entrepôt Principal"
+        400:
+          description: Requête invalide
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                message:
+                  type: string
+                details?:
+                  type: array
+                  items: string
+                timestamp:
+                  type: datetime
+              example:
+                error: "BAD_REQUEST"
+                message: "Le changement de quantité est requis"
+                details: ["Le changement de quantité est requis"]
+                timestamp: "2024-01-15T11:45:00Z"
+        404:
+          description: Livre non trouvé
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                message:
+                  type: string
+                timestamp:
+                  type: datetime
+              example:
+                error: "NOT_FOUND"
+                message: "Aucun stock trouvé pour le livre avec l'ID 123456789"
+                timestamp: "2024-01-15T11:45:00Z"
+        409:
+          description: Conflit - Stock insuffisant
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                message:
+                  type: string
+                currentQuantity:
+                  type: integer
+                requestedQuantity:
+                  type: integer
+                timestamp:
+                  type: datetime
+              example:
+                error: "INSUFFICIENT_STOCK"
+                message: "Stock insuffisant pour effectuer l'opération"
+                currentQuantity: 2
+                requestedQuantity: 5
+                timestamp: "2024-01-15T11:45:00Z"
+        500:
+          description: Erreur interne du serveur
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                message:
+                  type: string
+                timestamp:
+                  type: datetime
+              example:
+                error: "INTERNAL_ERROR"
+                message: "Une erreur inattendue s'est produite lors de la mise à jour"
+                timestamp: "2024-01-15T11:45:00Z"

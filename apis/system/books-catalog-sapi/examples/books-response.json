@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "The Great Gatsby",
+    "authorId": 101,
+    "price": 15.99,
+    "isbn": "978-0-7432-7356-5"
+  },
+  {
+    "id": 2,
+    "title": "To Kill a Mockingbird",
+    "authorId": 102,
+    "price": 12.50,
+    "isbn": "978-0-06-112008-4"
+  },
+  {
+    "id": 3,
+    "title": "1984",
+    "authorId": 103,
+    "price": 13.75,
+    "isbn": "978-0-452-28423-4"
+  }
+]

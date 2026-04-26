@@ -1,0 +1,17 @@
+[
+  {
+    "id": 101,
+    "name": "F. Scott Fitzgerald",
+    "biography": "American novelist and short story writer, widely regarded as one of the greatest American writers of the 20th century."
+  },
+  {
+    "id": 102,
+    "name": "Harper Lee",
+    "biography": "American novelist best known for her 1960 novel To Kill a Mockingbird."
+  },
+  {
+    "id": 103,
+    "name": "George Orwell",
+    "biography": "English novelist, essayist, journalist and critic, best known for his novels 1984 and Animal Farm."
+  }
+]

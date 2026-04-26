@@ -1,0 +1,75 @@
+{
+  "basicConstraints": 50,
+  "criticalExtensionOIDs": [
+    "libero",
+    "sodales"
+  ],
+  "extendedKeyUsage": [
+    "Lorem",
+    "Nam",
+    "pretium"
+  ],
+  "extensions": [
+    {
+      "criticality": false,
+      "oid": "a"
+    }
+  ],
+  "issuerAlternativeNames": [
+    {
+      "name": "Akilah",
+      "type": 59
+    }
+  ],
+  "issuerDN": {
+    "commonName": "mi",
+    "name": "Cory"
+  },
+  "issuerUniqueID": [
+    false,
+    true,
+    true
+  ],
+  "issuerX500Principal": {
+    "name": "Alyssa"
+  },
+  "keyUsage": [
+    true,
+    true
+  ],
+  "name": "Allena",
+  "nonCriticalExtensionOIDs": [
+    "at",
+    "dui",
+    "nunc"
+  ],
+  "notAfter": "2025-04-25",
+  "notBefore": "2022-11-19",
+  "publicKey": {
+    "algorithm": "nunc",
+    "modulus": 94,
+    "params": 5,
+    "publicKey": "viverra"
+  },
+  "serialNumber": 48,
+  "serialNumberObject": {
+    "serialNumber": 54
+  },
+  "sigAlgName": "erat",
+  "sigAlgOID": "nibh",
+  "subjectAlternativeNames": [
+    {
+      "name": "Dallas",
+      "type": 71
+    }
+  ],
+  "subjectDN": {
+    "commonName": "sed",
+    "name": "Alexa"
+  },
+  "subjectX500Principal": {
+    "name": "Alida"
+  },
+  "type": "nibh",
+  "version": 71
+}
