@@ -2,6 +2,10 @@
 .DS_Store
 Thumbs.db
 
+# On ignore les fichiers de tests générés par Mule
+**/src/test/resources/embedded*
+**/src/test/resources/recorder*
+
 # Empêcher la synchro des fichiers temporaires MuleSoft de TOUS les sous-dossiers
 **/target/
 **/.mule/
