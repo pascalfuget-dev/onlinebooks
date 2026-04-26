@@ -1,0 +1,7 @@
+{
+  "applicationName": "customer-sapi-impl",
+  "runtime": "4.11.3:4e-java17",
+  "replicas": 1,
+  "replicaSize": "0.1",
+  "deploymentModel": "rolling"
+}

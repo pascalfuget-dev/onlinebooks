@@ -47,6 +47,6 @@
 		},
 		"editor.acceptSuggestionOnEnter": "on",
 		"editor.wordBasedSuggestions": "off",
-		"java.configuration.updateBuildConfiguration": "interactive"
+		"java.configuration.updateBuildConfiguration": "automatic"
 	}
 }
