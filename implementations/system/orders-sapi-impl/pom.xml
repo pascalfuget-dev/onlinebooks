@@ -74,17 +74,10 @@
             <classifier>mule-plugin</classifier>
         </dependency>
         <dependency>
-            <groupId>org.mule.connectors</groupId>
-            <artifactId>mule-objectstore-connector</artifactId>
-            <version>1.2.1</version>
-            <classifier>mule-plugin</classifier>
-        </dependency>
-        <dependency>
             <groupId>bcb991d0-dc5b-4ff7-b0d9-bda707983f40</groupId>
-            <artifactId>onlinebooks-types</artifactId>
-            <version>1.3.0</version>
-            <classifier>raml</classifier>
-            <type>zip</type>
+            <artifactId>mule-plugin-customers-sapi</artifactId>
+            <version>1.0.0</version>
+            <classifier>mule-plugin</classifier>
         </dependency>
     </dependencies>
 </project>
