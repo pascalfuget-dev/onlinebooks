@@ -1,4 +1,6 @@
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd   http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd   http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+	http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
     <http:listener-config name="inventory-sapi-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081"></http:listener-connection>
     </http:listener-config>
@@ -131,25 +133,64 @@ output application/json
       </ee:variables>
         </ee:transform>
     <os:retrieve doc:name="Retrieve" doc:id="njgryr" key="#[vars.bookId]" objectStore="stocks"/>
+    <validation:is-true doc:name="Is true" doc:id="gkqqtj" expression="#[(payload.quantity default 0) + (vars.quantity default 0) &gt;= 0]" message='#["Insufficient Stock for book " ++ vars.bookId]'/>
     <ee:transform doc:name="Transform" doc:id="yicqsv" >
-      <ee:message >
-        <ee:set-payload doc:name="Set payload" doc:id="zboycq" ><![CDATA[%dw 2.0
+      <ee:variables>
+                <ee:set-variable variableName="newvalue"><![CDATA[%dw 2.0
     output application/java
     ---
 payload update {
     case .quantity -> $ + (vars.quantity default 0)
-}]]></ee:set-payload>
-      </ee:message>
+}]]></ee:set-variable>
+            </ee:variables>    
     </ee:transform>
-    <os:store doc:name="Store" doc:id="oimoxl" key="#[vars.bookId]" objectStore="stocks"/>
+    <os:store doc:name="Store" doc:id="oimoxl" key="#[vars.bookId]" objectStore="stocks">
+            <os:value><![CDATA[#[vars.newvalue]]]></os:value>
+        </os:store>
         <ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+vars.newvalue]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+    <error-handler>
+      <on-error-propagate doc:name="On-error-propagate" type="OS:KEY_NOT_FOUND">
+                    <ee:transform doc:name="Transform" doc:id="iioswd" >
+                      <ee:message >
+                        <ee:set-payload doc:name="Set payload" doc:id="hagbma" ><![CDATA[%dw 2.0
+                    output application/json
+                    ---
+                    {
+                      "error": "Resource Not Found",
+                      "message": error.description
+                    }]]></ee:set-payload>
+                      </ee:message>
+                      <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA["404"]]></ee:set-variable>
+                      </ee:variables>      
+                    </ee:transform>
+              
+                  </on-error-propagate>
+      <on-error-propagate doc:name="On-error-propagate" enableNotifications="true" type="VALIDATION:INVALID_BOOLEAN">
+        <ee:transform doc:name="Transform" doc:id="kxxzfq" >
+                              <ee:message >
+                                <ee:set-payload doc:name="Set payload" doc:id="bcbcjj" ><![CDATA[%dw 2.0
+                            output application/json
+                            ---
+                            {
+                              "error": "Insufficient stock",
+                              "message": error.description
+                            }]]></ee:set-payload>
+                              </ee:message>
+                              <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA["409"]]></ee:set-variable>
+                    </ee:variables>      
+                            </ee:transform>
+          
+      </on-error-propagate>
+    </error-handler>
     </flow>
     <flow name="get:\stocks\(bookId):inventory-sapi-config">
     <logger doc:name="Logger" doc:id="yytzoq" message='#["get stocks/" ++ attributes.uriParams.bookId]'/>
@@ -163,6 +204,25 @@ output application/json
 payload]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+    <error-handler>
+      <on-error-propagate doc:name="On-error-propagate" type="OS:KEY_NOT_FOUND">
+                    <ee:transform doc:name="Transform" doc:id="upxywp" >
+                      <ee:message >
+                        <ee:set-payload doc:name="Set payload" doc:id="qxhlfq" ><![CDATA[%dw 2.0
+                    output application/json
+                    ---
+                    {
+                      "error": "Resource Not Found",
+                      "message": error.description
+                    }]]></ee:set-payload>
+                      </ee:message>
+                      <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA["404"]]></ee:set-variable>
+                      </ee:variables>      
+                    </ee:transform>
+              
+                  </on-error-propagate>
+    </error-handler>
     </flow>
     <flow name="init">
         <http:listener config-ref="inventory-sapi-httpListenerConfig" doc:id="yyvhqz" doc:name="Listener" path="/init"></http:listener>

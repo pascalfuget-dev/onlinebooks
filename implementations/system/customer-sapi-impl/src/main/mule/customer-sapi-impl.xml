@@ -124,53 +124,34 @@ output application/json
     </error-handler>
   </flow>
   <flow name="get:\customers\(id):customers-sapi-config">
-    <try doc:name="Try" doc:id="87f45e9a-1234-5678-9abc-def012345678">
-      <os:retrieve doc:name="Retrieve" doc:id="gascjm" key="#[attributes.uriParams.'id']" objectStore="Customers"/>
-      <choice doc:name="Choice" doc:id="12345678-abcd-efgh-ijkl-mnopqrstuvwx">
-        <when expression="#[payload != null and payload != '']">
-          <ee:transform doc:name="Transform Message">
-            <ee:message>
-              <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-            </ee:message>
-          </ee:transform>
-        </when>
-        <otherwise>
-          <ee:transform doc:name="Customer Not Found Response" doc:id="98765432-zyxw-vutr-sqpo-nmlkjihgfedc">
-            <ee:message>
-              <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  "message": "customer not found"
-}]]></ee:set-payload>
-            </ee:message>
-            <ee:variables>
-              <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-            </ee:variables>
-          </ee:transform>
-        </otherwise>
-      </choice>
-      <error-handler>
-        <on-error-propagate type="OS:KEY_NOT_FOUND">
-          <ee:transform doc:name="Customer Not Found Response" doc:id="fedcba98-7654-3210-fedc-ba9876543210">
-            <ee:message>
-              <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  "message": "customer not found"
-}]]></ee:set-payload>
-            </ee:message>
-            <ee:variables>
-              <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-            </ee:variables>
-          </ee:transform>
-        </on-error-propagate>
-      </error-handler>
-    </try>
+    <os:retrieve doc:name="Retrieve" doc:id="cuuthi" key="#[attributes.uriParams.'id']" objectStore="Customers"/>
+    <ee:transform doc:name="Transform Message">
+                <ee:message>
+                  <ee:set-payload><![CDATA[%dw 2.0
+    output application/json
+    ---
+    payload]]></ee:set-payload>
+                </ee:message>
+              </ee:transform>
+    <error-handler>
+        <on-error-propagate doc:name="On-error-propagate" type="OS:KEY_NOT_FOUND">
+                      <ee:transform doc:name="Transform" doc:id="xescam" >
+                        <ee:message >
+                          <ee:set-payload doc:name="Set payload" doc:id="yhqzda" ><![CDATA[%dw 2.0
+                      output application/json
+                      ---
+                      {
+                        "error": "Resource Not Found",
+                        "message": error.description
+                      }]]></ee:set-payload>
+                        </ee:message>
+                        <ee:variables>
+                          <ee:set-variable variableName="httpStatus"><![CDATA["404"]]></ee:set-variable>
+                        </ee:variables>      
+                      </ee:transform>
+                
+                    </on-error-propagate>
+    </error-handler>
   </flow>
   <flow name="post:\customers:application\json:customers-sapi-config">
         <os:retrieve doc:name="Retrieve" doc:id="hlytzi" key="lastid" objectStore="Customers" target="lastid" targetValue="#[payload as Number]">

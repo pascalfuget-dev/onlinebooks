@@ -1,189 +1,190 @@
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:customer-sapi="http://www.mulesoft.org/schema/mule/customer-sapi" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd   http://www.mulesoft.org/schema/mule/customer-sapi http://www.mulesoft.org/schema/mule/customer-sapi/current/mule-customer-sapi.xsd  http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
-    <http:listener-config name="orders-sapi-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081"></http:listener-connection>
-    </http:listener-config>
-    <apikit:config api="resource::bcb991d0-dc5b-4ff7-b0d9-bda707983f40:orders-sapi:1.0.1:raml:zip:orders-sapi.raml" httpStatusVarName="httpStatus" name="orders-sapi-config" outboundHeadersMapName="outboundHeaders"></apikit:config>
-    <customer-sapi:config name="Config-customer-sapi" property_basePath="/customer/api" property_host="pf-mfg-001-wnashv.kipma3.deu-c1.cloudhub.io"></customer-sapi:config>
-    <os:object-store name="orders"></os:object-store>
-    <flow name="orders-sapi-main">
-        <http:listener config-ref="orders-sapi-httpListenerConfig" path="/api/*">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
-            </http:error-response>
-        </http:listener>
-        <apikit:router config-ref="orders-sapi-config"></apikit:router>
-        <error-handler>
-            <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:books-catalog-system-api="http://www.mulesoft.org/schema/mule/books-catalog-system-api" xmlns:customer-sapi="http://www.mulesoft.org/schema/mule/customer-sapi" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:inventory-sapi="http://www.mulesoft.org/schema/mule/inventory-sapi" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd   http://www.mulesoft.org/schema/mule/customer-sapi http://www.mulesoft.org/schema/mule/customer-sapi/current/mule-customer-sapi.xsd  http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd  http://www.mulesoft.org/schema/mule/inventory-sapi http://www.mulesoft.org/schema/mule/inventory-sapi/current/mule-inventory-sapi.xsd  http://www.mulesoft.org/schema/mule/books-catalog-system-api http://www.mulesoft.org/schema/mule/books-catalog-system-api/current/mule-books-catalog-system-api.xsd">
+  <http:listener-config name="orders-sapi-httpListenerConfig">
+    <http:listener-connection host="0.0.0.0" port="8081"></http:listener-connection>
+  </http:listener-config>
+  <apikit:config api="resource::bcb991d0-dc5b-4ff7-b0d9-bda707983f40:orders-sapi:1.0.1:raml:zip:orders-sapi.raml" httpStatusVarName="httpStatus" name="orders-sapi-config" outboundHeadersMapName="outboundHeaders"></apikit:config>
+  <os:object-store name="orders"></os:object-store>
+  <inventory-sapi:config name="Config-inventory" property_basePath="/inventory/api" property_host="pf-mfg-001-wnashv.kipma3.deu-c1.cloudhub.io"></inventory-sapi:config>
+  <flow name="orders-sapi-main">
+    <http:listener config-ref="orders-sapi-httpListenerConfig" path="/api/*">
+      <http:response statusCode="#[vars.httpStatus default 200]">
+        <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+      </http:response>
+      <http:error-response statusCode="#[vars.httpStatus default 500]">
+        <http:body>#[payload]</http:body>
+        <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+      </http:error-response>
+    </http:listener>
+    <apikit:router config-ref="orders-sapi-config"></apikit:router>
+    <error-handler>
+      <on-error-propagate type="APIKIT:BAD_REQUEST">
+        <ee:transform doc:name="Transform Message">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Bad request"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+          </ee:variables>
+        </ee:transform>
+      </on-error-propagate>
+      <on-error-propagate type="APIKIT:NOT_FOUND">
+        <ee:transform doc:name="Transform Message">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+          </ee:variables>
+        </ee:transform>
+      </on-error-propagate>
+      <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+        <ee:transform doc:name="Transform Message">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Method not allowed"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+          </ee:variables>
+        </ee:transform>
+      </on-error-propagate>
+      <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+        <ee:transform doc:name="Transform Message">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not acceptable"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+          </ee:variables>
+        </ee:transform>
+      </on-error-propagate>
+      <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+        <ee:transform doc:name="Transform Message">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Unsupported media type"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+          </ee:variables>
+        </ee:transform>
+      </on-error-propagate>
+      <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+        <ee:transform doc:name="Transform Message">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not Implemented"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
-    </flow>
-    <flow name="orders-sapi-console">
-        <http:listener config-ref="orders-sapi-httpListenerConfig" path="/console/*">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
-            </http:error-response>
-        </http:listener>
-        <apikit:console config-ref="orders-sapi-config"></apikit:console>
-        <error-handler>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+          </ee:variables>
+        </ee:transform>
+      </on-error-propagate>
+    </error-handler>
+  </flow>
+  <flow name="orders-sapi-console">
+    <http:listener config-ref="orders-sapi-httpListenerConfig" path="/console/*">
+      <http:response statusCode="#[vars.httpStatus default 200]">
+        <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+      </http:response>
+      <http:error-response statusCode="#[vars.httpStatus default 500]">
+        <http:body>#[payload]</http:body>
+        <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+      </http:error-response>
+    </http:listener>
+    <apikit:console config-ref="orders-sapi-config"></apikit:console>
+    <error-handler>
+      <on-error-propagate type="APIKIT:NOT_FOUND">
+        <ee:transform doc:name="Transform Message">
+          <ee:message>
+            <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
-    </flow>
-    <flow name="get:\orders:orders-sapi-config">
-        <logger level="INFO" message="get:\orders:orders-sapi-config"></logger>
-    </flow>
-    <flow name="get:\orders\(id):orders-sapi-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
-            </ee:variables>
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+          </ee:variables>
         </ee:transform>
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "Order not found"
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
-            </ee:message>
+      </on-error-propagate>
+    </error-handler>
+  </flow>
+  <flow name="get:\orders:orders-sapi-config">
+    <logger level="INFO" message="get:\orders:orders-sapi-config"></logger>
+    <os:retrieve-all doc:name="Retrieve all" doc:id="tfbkus" objectStore="orders"/>
+    <ee:transform doc:name="Transform" doc:id="gdfhjl" >
+      <ee:message >
+        <ee:set-payload doc:name="Set payload" doc:id="kefklr" ><![CDATA[%dw 2.0
+    output application/json
+    ---
+payload]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+  </flow>
+  <flow name="get:\orders\(id):orders-sapi-config">
+    <ee:transform doc:name="Transform Message">
+      <ee:variables>
+        <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+      </ee:variables>
+    </ee:transform>
+    <os:retrieve doc:name="Retrieve" doc:id="khzqhp" key="#[vars.id]" objectStore="orders"/>
+    <ee:transform doc:name="Transform" doc:id="qngjck" >
+          <ee:message >
+            <ee:set-payload doc:name="Set payload" doc:id="dewetz" ><![CDATA[%dw 2.0
+        output application/json
+        ---
+    payload]]></ee:set-payload>
+          </ee:message>
         </ee:transform>
-    </flow>
-    <flow name="post:\orders:application\json:orders-sapi-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="initialpayload"><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <flow-ref doc:name="validateCustomer" name="validateCustomer"></flow-ref>
-        <os:retrieve doc:id="nhkkzi" doc:name="Retrieve" key="lastid" objectStore="orders" target="lastid" targetValue="#[(payload as Number default 0) + 1]"/>
-        <ee:transform doc:name="Transform" doc:id="mypkfm" >
-            <ee:variables>
+  </flow>
+  <flow name="post:\orders:application\json:orders-sapi-config">
+    <ee:transform doc:name="Transform Message">
+      <ee:variables>
         <ee:set-variable variableName="initialpayload"><![CDATA[%dw 2.0
 output application/json
 ---
-payload update {
+payload]]></ee:set-variable>
+      </ee:variables>
+    </ee:transform>
+    <flow-ref doc:name="updateStocks" name="updateStocks"></flow-ref>
+    <os:retrieve doc:id="nhkkzi" doc:name="Retrieve" key="lastid" objectStore="orders" target="lastid" targetValue="#[(payload as Number default 0) + 1]"></os:retrieve>
+    <ee:transform doc:id="mypkfm" doc:name="Transform">
+      <ee:variables>
+        <ee:set-variable variableName="initialpayload"><![CDATA[%dw 2.0
+output application/json
+---
+vars.initialpayload update {
     case .orderId -> (vars.lastid)
 }]]></ee:set-variable>
       </ee:variables>
-        </ee:transform>
-        <os:store doc:id="xoupea" doc:name="Store" key="#[vars.lastid]"></os:store>
-    </flow>
-    <sub-flow name="validateCustomer">
-        <try doc:id="ssjmng" doc:name="Try">
-            <customer-sapi:get-customer-by-id config-ref="Config-customer-sapi" doc:id="puplzm" doc:name="Get customer by id" id="#[vars.initialpayload.customerId]">
-                <error-mapping sourceType="CUSTOMER-SAPI:NOT_FOUND" targetType="CUSTOMER-SAPI:NOT_FOUND"></error-mapping>
-            </customer-sapi:get-customer-by-id>
-            <error-handler>
-                <on-error-propagate>
-                    <ee:transform doc:id="nkgffc" doc:name="Transform">
-                        <ee:message>
-                            <ee:set-payload doc:id="pwxxgz" doc:name="Set payload"><![CDATA[error.errorMessage.payload]]></ee:set-payload>
-                        </ee:message>
-                        <ee:variables>
-                            <ee:set-variable variableName="NewVariable1"><![CDATA[error.errorMessage.attributes.statusCode]]></ee:set-variable>
-                        </ee:variables>
-                    </ee:transform>
-                </on-error-propagate>
-            </error-handler>
-        </try>
-    </sub-flow>
+    </ee:transform>
+    <os:store doc:id="xoupea" doc:name="Store" key="#[vars.lastid]" objectStore="orders">
+      <os:value><![CDATA[#[vars.initialpayload]]]></os:value>
+    </os:store>
+  </flow>
+  <sub-flow name="updateStocks">
+    <foreach collection="#[vars.initialpayload.items]" doc:id="xdataq" doc:name="Foreach">
+            <inventory-sapi:modifier-le-stock-dun-livre doc:name="Modifier le stock d'un livre" doc:id="dmjyup" book-id="#[payload.bookId]" config-ref="Config-inventory">
+              <inventory-sapi:modifier-le-stock-dun-livre-request-data><![CDATA[#[{
+      "quantityChange": -(payload.quantity default 0),
+      "reason": "Vente en ligne"
+    }]]]></inventory-sapi:modifier-le-stock-dun-livre-request-data>
+            </inventory-sapi:modifier-le-stock-dun-livre>
+          </foreach>
+  </sub-flow>
 </mule>

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>bcb991d0-dc5b-4ff7-b0d9-bda707983f40</groupId>
     <artifactId>books-catalog-sapi-impl</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>mule-application</packaging>
     <name>books-catalog-sapi-impl</name>
     <properties>

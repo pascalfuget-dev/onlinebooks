@@ -203,6 +203,25 @@ output application/json
 payload]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+    <error-handler>
+      <on-error-propagate doc:name="On-error-propagate" type="OS:KEY_NOT_FOUND">
+              <ee:transform doc:name="Transform" doc:id="texuhb" >
+                <ee:message >
+                  <ee:set-payload doc:name="Set payload" doc:id="rqukzf" ><![CDATA[%dw 2.0
+              output application/json
+              ---
+              {
+                "error": "Resource Not Found",
+                "message": error.description
+              }]]></ee:set-payload>
+                </ee:message>
+                <ee:variables>
+                  <ee:set-variable variableName="httpStatus"><![CDATA["404"]]></ee:set-variable>
+                </ee:variables>      
+              </ee:transform>
+            
+            </on-error-propagate>
+    </error-handler>
         
         
     </flow>
@@ -218,5 +237,24 @@ payload]]></ee:set-payload>
     payload]]></ee:set-payload>
                 </ee:message>
             </ee:transform>
+    <error-handler>
+      <on-error-propagate doc:name="On-error-propagate" type="OS:KEY_NOT_FOUND">
+        <ee:transform doc:name="Transform" doc:id="isnoqm" >
+          <ee:message >
+            <ee:set-payload doc:name="Set payload" doc:id="knslat" ><![CDATA[%dw 2.0
+        output application/json
+        ---
+        {
+          "error": "Resource Not Found",
+          "message": error.description
+        }]]></ee:set-payload>
+          </ee:message>
+          <ee:variables>
+            <ee:set-variable variableName="httpStatus"><![CDATA["404"]]></ee:set-variable>
+          </ee:variables>      
+        </ee:transform>
+          
+      </on-error-propagate>
+    </error-handler>
     </flow>
 </mule>
