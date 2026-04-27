@@ -10,10 +10,10 @@
     {
       "groupId": "bcb991d0-dc5b-4ff7-b0d9-bda707983f40",
       "assetId": "onlinebooks-types",
-      "version": "1.3.0"
+      "version": "1.3.1"
     }
   ],
   "groupId": "bcb991d0-dc5b-4ff7-b0d9-bda707983f40",
   "assetId": "orders-sapi",
-  "version": "1.0.1"
+  "version": "1.0.2"
 }
